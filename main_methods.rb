@@ -1,19 +1,28 @@
 module MainMethods
 
-def start
-  puts "What would you like to do? Create, List, Update, or Vote?"
-  answer = gets.chomp.downcase
-  case answer
-  when "create"
-    create() # Done 
-  when "list"
-    list() # Done
-  when "update"
-    update() # Done
-  when "vote"
-    vote()
+  def start
+    process = 0
+    until process == 1
+      puts "What would you like to do? Create, List, Update, or Vote?"
+      answer = gets.chomp.downcase
+      case answer
+      when "create"
+      create() # Done 
+      when "list"
+      list() # Done
+      when "update"
+      update() # Done
+      when "vote"
+        vote()
+        process += 1
+      when "sample"
+        Citizen.sample_citizens
+        Politician.sample_politicians
+      else
+        start
+      end
+    end
   end
-end
 
 
 
@@ -120,4 +129,76 @@ def change_politics old_name
     end
 end
 
+
+def vote
+  puts "The polls are open!"
+  start_campaign
+  polling
+  define_winner
 end
+
+
+def start_campaign
+  Politician.all.each do |politician|
+    Citizen.all.each do |citizen|
+      puts "Vote for #{politician.name}"
+    end
+  end
+end
+
+
+def polling
+  Citizen.all.each do |citizen|
+    if citizen.politics.downcase == "tea party"
+      if (1 + rand(100)) > 10
+        Citizen.repvotes.push citizen.name
+      else
+        Citizen.demvotes.push citizen.name
+      end
+    elsif citizen.politics.downcase == "conservative"
+      if (1 + rand(100)) > 25
+        Citizen.repvotes.push citizen.name
+      else
+        Citizen.demvotes.push citizen.name
+      end
+    elsif citizen.politics.downcase == "neutral"
+      if (1 + rand(100)) > 50
+        Citizen.repvotes.push citizen.name
+      else
+        Citizen.demvotes.push citizen.name
+      end
+    elsif citizen.politics.downcase == "liberal"
+      if (1 + rand(100)) > 75
+        Citizen.repvotes.push citizen.name
+      else
+        Citizen.demvotes.push citizen.name
+      end
+    elsif citizen.politics.downcase == "socialist"
+      if (1 + rand(100)) > 90
+        Citizen.repvotes.push citizen.name
+      else
+        Citizen.demvotes.push citizen.name
+      end
+    else
+      puts "Invalid political affiliation"
+    end 
+  end
+  # p Citizen.demvotes
+  # p Citizen.repvotes
+end
+
+
+def define_winner
+  if Citizen.demvotes.length > Citizen.repvotes.length
+    puts "The Democratic candidate has won the election!"
+  else
+    puts "The Republician candidate has won the election!"
+  end
+end
+
+
+
+
+
+end
+
